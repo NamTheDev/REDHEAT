@@ -1,4 +1,4 @@
-import { Client, GatewayIntentBits, EmbedBuilder } from "discord.js";
+import { Client, GatewayIntentBits, EmbedBuilder, PermissionFlagsBits } from "discord.js";
 import config from "./config.json";
 import db from "./db";
 
@@ -28,7 +28,8 @@ client.on("messageCreate", (msg) => {
     { name: "buy <item>", desc: "Buy item with Shellite" },
     { name: "build", desc: "Start building a castle" },
     { name: "splash @user", desc: "Damage a castle" },
-    { name: "sell", desc: "Sell castle for Bloodern" }
+    { name: "sell", desc: "Sell castle for Bloodern" },
+    { name: "give @user <amount>", desc: "Admin: Give Shellite" }
   ];
 
   switch (cmd) {
@@ -81,6 +82,18 @@ client.on("messageCreate", (msg) => {
       db.run("UPDATE users SET bloodern = bloodern + ? WHERE id = ?", [price, uid]);
       db.run("DELETE FROM castles WHERE user_id = ?", [uid]);
       reply({ content: `💰 Sold castle for **${price}** Bloodern.` });
+      break;
+
+    case "give":
+      if (!msg.member?.permissions.has(PermissionFlagsBits.ManageGuild)) {
+        return reply({ content: "Unauthorized." });
+      }
+      const giveTarget = msg.mentions.users.first();
+      const amount = parseInt(args[1] ?? "0");
+      if (!giveTarget || isNaN(amount) || amount <= 0) return reply({ content: "Usage: give @user <amount>" });
+      db.run("INSERT OR IGNORE INTO users (id) VALUES (?)", [giveTarget.id]);
+      db.run("UPDATE users SET shellite = shellite + ? WHERE id = ?", [amount, giveTarget.id]);
+      reply({ content: `Gave ${amount} Shellite to **${giveTarget.username}**.` });
       break;
   }
 });
