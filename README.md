@@ -1,16 +1,3 @@
-# redheat_bot
+# Redheat Bot
 
-To install dependencies:
-
-```bash
-bun install
-```
-
-To run:
-
-```bash
-bun run index.ts
-```
-
-This project was created using `bun init` in bun v1.3.8. [Bun](https://bun.com) is a fast all-in-one JavaScript runtime.
-# REDHEAT
+Redheat Bot is a Discord application designed to manage the Summer Event, featuring a custom currency system called "Shellite" and interactive sand castle mechanics. Users can build, shape, damage, and sell castles to earn event-specific rewards.
